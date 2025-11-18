@@ -1,0 +1,59 @@
+api_version = "2025-10"
+
+[[extensions]]
+name = "hide-delivery-methods"
+handle = "hide-delivery-methods"
+type = "ui_extension"
+uid = "393fc327-a02a-0d42-f67a-4cf69cbcbdd92b0177a6"
+
+[[extensions.targeting]]
+module = "./src/Checkout.jsx"
+target = "purchase.checkout.block.render"
+
+[extensions.capabilities]
+api_access = true
+block_progress = true
+
+[extensions.settings]
+[[extensions.settings.fields]]
+key = "enable_blocked_checkout_banner"
+type = "boolean"
+name = "Enable blocked checkout banner"
+description = "Show a banner if all items in the cart are either unavailable for pickup or shipping."
+
+[[extensions.settings.fields]]
+key = "enable_block_pickup"
+type = "boolean"
+name = "Enable pickup blocking"
+description = "Enable pickup blocking."
+
+[[extensions.settings.fields]]
+key = "pickup_tag"
+type = "single_line_text_field"
+name = "Pickup blocked tag"
+description = "If a product has this tag, pickup will be blocked at checkout. If no tag is set, 'online exclusive' will be used."
+
+[[extensions.settings.fields]]
+key = "pickup_message"
+type = "single_line_text_field"
+name = "Pickup blocked message"
+description = "Error message shown when pickup is blocked for items in the cart. If no message is set, 'PICKUP is not available for the item(s) in your cart. Please choose a shipping method.' will be used."
+
+[[extensions.settings.fields]]
+key = "enable_block_shipping"
+type = "boolean"
+name = "Enable shipping blocking"
+description = "Enable shipping blocking."
+
+[[extensions.settings.fields]]
+key = "shipping_tag"
+type = "single_line_text_field"
+name = "Shipping blocked tag"
+description = "If a product has this tag, shipping will be blocked at checkout. If no tag is set, 'store exclusive' will be used."
+
+[[extensions.settings.fields]]
+key = "shipping_message"
+type = "single_line_text_field"
+name = "Shipping blocked message"
+description = "Error message shown when shipping is blocked for items in the cart. If no message is set, 'SHIPPING is not available for the item(s) in your cart. Please choose a pickup option.' will be used."
+
