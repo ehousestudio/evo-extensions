@@ -1,7 +1,7 @@
 api_version = "2025-10"
 
 [[extensions]]
-name = "hide-delivery-methods"
+name = "Block Delivery Methods"
 handle = "hide-delivery-methods"
 type = "ui_extension"
 uid = "393fc327-a02a-0d42-f67a-4cf69cbcbdd92b0177a6"
