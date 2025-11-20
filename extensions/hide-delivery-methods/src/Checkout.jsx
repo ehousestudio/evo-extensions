@@ -10,6 +10,7 @@ import {
   useApi,
   useShop,
   useSettings,
+  useApplyAttributeChange,
 } from "@shopify/ui-extensions/checkout/preact";
 
 export default function extension() {
@@ -21,13 +22,26 @@ function Extension() {
   const { query } = useApi();
   const shop = useShop();
   const settings = useSettings();
+  const applyAttributeChange = useApplyAttributeChange();
 
   const [productTags, setProductTags] = useState({});
 
   // Get all delivery groups and use the first one
   const deliveryGroups = useDeliveryGroups();
-  const deliveryGroup = useDeliveryGroup(deliveryGroups?.[0]);
+  const deliveryGroup = useDeliveryGroup(deliveryGroups[0]);
   const selectedDeliveryOption = deliveryGroup?.selectedDeliveryOption;
+  const [deliveryOption, setDeliveryOption] = useState(selectedDeliveryOption);
+
+  // Update state on delivery option change to trigger re-render
+  if (selectedDeliveryOption?.type !== deliveryOption?.type) {
+    setDeliveryOption(selectedDeliveryOption);
+
+    applyAttributeChange({
+      key: 'delivery_option',
+      type: 'updateAttribute',
+      value: `${deliveryOption?.type}`
+    });
+  }
 
   // Fetch product tags for all products in the cart
   useEffect(() => {
@@ -114,12 +128,12 @@ function Extension() {
     if (!canBlockProgress) return;
 
     // If no delivery option is selected yet, allow progress
-    if (!selectedDeliveryOption) {
+    if (!deliveryOption) {
       return { behavior: "allow" };
     }
 
-    const isPickup = selectedDeliveryOption?.type === "pickup";
-    const isShipping = selectedDeliveryOption?.type === "shipping";
+    const isPickup = deliveryOption?.type === "pickup";
+    const isShipping = deliveryOption?.type === "shipping";
 
     // Pickup blocked for online exclusive items
     if (isPickup && cartHasTag(pickupTag) && enableBlockPickup == true) {
