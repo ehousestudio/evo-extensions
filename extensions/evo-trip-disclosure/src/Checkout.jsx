@@ -18,19 +18,17 @@ function Extension() {
   const cartLines = useCartLines();
   const settings = useSettings();
   const shop = useShop();
-  const hasEvoTrip = cartLines.find((cartLine) => cartLine.merchandise.product.productType === settings.product_type);
+  const hasEvoTrip = cartLines.find((cartLine) => cartLine.merchandise?.product?.productType === settings?.product_type);
   const [isAgreementChecked, setIsAgreementChecked] = useState(false);
   const errorMessage =
     (typeof settings?.error_message === "string" &&
       settings?.error_message) ||
     "Agreement must be checked to proceed.";
 
-  if (!hasEvoTrip) return;
-
   // Block or allow progress based on agreement checkbox
   useBuyerJourneyIntercept(({ canBlockProgress }) => {
     // Block progress if agreement is unchecked
-    if (canBlockProgress && !isAgreementChecked) {
+    if (hasEvoTrip && canBlockProgress && !isAgreementChecked) {
       return {
         behavior: 'block',
         reason: errorMessage,
@@ -46,6 +44,8 @@ function Extension() {
       };
     }
   });
+
+  if (!hasEvoTrip) return;
 
   return (
     <>
@@ -69,7 +69,7 @@ function Extension() {
           <s-text>
             {settings?.text}
 
-            {settings?.link_text != '' && settings?.link != '' && (
+            {settings?.link_text && settings?.link && (
               <s-link href={`${shop?.storefrontUrl}${settings?.link}`}>
                 {settings?.link_text}
               </s-link>
