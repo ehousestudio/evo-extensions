@@ -7,10 +7,10 @@ import {
   useCartLines,
   useSettings,
   useShop,
+  useApplyAttributeChange,
 } from "@shopify/ui-extensions/checkout/preact";
 
-// 1. Export the extension
-export default async () => {
+export default function extension() {
   render(<Extension />, document.body)
 };
 
@@ -18,8 +18,9 @@ function Extension() {
   const cartLines = useCartLines();
   const settings = useSettings();
   const shop = useShop();
+  const applyAttributeChange = useApplyAttributeChange();
   const hasEvoTrip = cartLines.find((cartLine) => cartLine.merchandise?.product?.productType === settings?.product_type);
-  const [isAgreementChecked, setIsAgreementChecked] = useState(false);
+  const [isAgreementChecked, setIsAgreementChecked] = useState();
   const errorMessage =
     (typeof settings?.error_message === "string" &&
       settings?.error_message) ||
@@ -27,6 +28,8 @@ function Extension() {
 
   // Block or allow progress based on agreement checkbox
   useBuyerJourneyIntercept(({ canBlockProgress }) => {
+    if (!canBlockProgress) return;
+
     // Block progress if agreement is unchecked
     if (hasEvoTrip && canBlockProgress && !isAgreementChecked) {
       return {
@@ -45,6 +48,16 @@ function Extension() {
     }
   });
 
+  function handleCheckboxChange(checked) {
+    setIsAgreementChecked(checked);
+
+    applyAttributeChange({
+      key: 'evo_agreement',
+      type: 'updateAttribute',
+      value: `${checked}`
+    });
+  }
+
   if (!hasEvoTrip) return;
 
   return (
@@ -57,9 +70,7 @@ function Extension() {
         <s-grid-item>
           <s-checkbox
             checked={isAgreementChecked}
-            onChange={(event) => {
-              setIsAgreementChecked(event.target.checked);
-            }}
+            onChange={(event) => handleCheckboxChange(event.target.checked)}
             required
           >
           </s-checkbox>
