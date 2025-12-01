@@ -1,0 +1,19 @@
+query CartTransformRunInput {
+  cart {
+    lines {
+      id
+      quantity
+      cost {
+        amountPerQuantity {
+          amount
+        }
+      }
+      bundleParent: attribute(key: "_bundle_parent") {
+        value
+      }
+      bundleDiscount: attribute(key: "_bundle_discount") {
+        value
+      }
+    }
+  }
+}
